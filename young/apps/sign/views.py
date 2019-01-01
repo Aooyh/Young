@@ -45,8 +45,10 @@ def check_sms_code(request):
     mobile = request.data.get('mobile')
     sms_code = request.data.get('sms_code')
     correct = False
-    if sms_code == redis_conn.get('{}_code'.format(mobile)).decode():
-        correct = True
+    redis_code = redis_conn.get('{}_code'.format(mobile))
+    if redis_code:
+        if sms_code == redis_code.decode():
+            correct = True
     return correct
 
 
@@ -69,7 +71,7 @@ class SendSms(APIView):
     def get(request, mobile):
         sms_code = '{:04d}'.format(random.randint(0, 9999))
         send_sms_code.delay(mobile, sms_code)
-        redis_conn.set('{}_code'.format(mobile), sms_code, 60)
+        redis_conn.set('{}_code'.format(mobile), sms_code, 180)
         return Response(
             data={
              'data': {'message': '信息已发送'},
