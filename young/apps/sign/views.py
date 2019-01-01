@@ -70,7 +70,13 @@ class SendSms(APIView):
         sms_code = '{:04d}'.format(random.randint(0, 9999))
         send_sms_code.delay(mobile, sms_code)
         redis_conn.set('{}_code'.format(mobile), sms_code, 60)
-        return Response(data={'message': '信息已发送'}, status=status.HTTP_200_OK)
+        return Response(
+            data={
+             'data': {'message': '信息已发送'},
+             'code': 200
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class RegisterAPIView(CreateAPIView):
@@ -79,7 +85,13 @@ class RegisterAPIView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         if check_sms_code(request):
             return super().create(request)
-        return Response(data={'message': '短信验证码错误'}, status=status.HTTP_200_OK)
+        return Response(
+            data={
+                'data': {'message': '短信验证码错误'},
+                'code': 400
+                },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class SignInAPIView(APIView):
@@ -89,13 +101,41 @@ class SignInAPIView(APIView):
         password = request.data.get('password')
         user = User.objects.filter(Q(username=username) | Q(mobile=username)).first()
         if not user:
-            return Response(data={'message': '用户不存在'}, status=status.HTTP_200_OK)
+            return Response(
+                data={
+                    'data': {'message': '用户不存在'},
+                    'code': 200
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if password:
             if user.check_password(password):
                 token = generate_token(user)
-                return Response(data={'token': token, 'user_id': user.id}, status=status.HTTP_200_OK)
-            return Response(data={'message': '用户名或密码错误'}, status=status.HTTP_200_OK)
+                return Response(
+                    data={
+                        'token': token, 'user_id': user.id
+                    },
+                    status=status.HTTP_200_OK
+                )
+            return Response(
+                data={
+                    'data': {'message': '用户名或密码错误'},
+                    'code': 200,
+                },
+                status=status.HTTP_400_BAD_REQUEST)
         if check_sms_code(request):
             token = generate_token(user)
-            return Response(data={'token': token, 'user_id': user.id}, status=status.HTTP_200_OK)
-        return Response(data={'message': '验证码错误'}, status=status.HTTP_200_OK)
+            return Response(
+                data={
+                    'data': {'token': token, 'user_id': user.id},
+                    'code': 200
+                },
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            data={
+                'data': {'message': '验证码错误'},
+                'code': 400
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
