@@ -43,6 +43,7 @@ def check_sms_code(request):
     验证短信验证码
     """
     mobile = request.data.get('mobile')
+    mobile = request.data.get('username') if not mobile else mobile
     sms_code = request.data.get('sms_code')
     correct = False
     redis_code = redis_conn.get('{}_code'.format(mobile))
