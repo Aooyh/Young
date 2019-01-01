@@ -113,7 +113,8 @@ class SignInAPIView(APIView):
                 token = generate_token(user)
                 return Response(
                     data={
-                        'token': token, 'user_id': user.id
+                        'data': {'token': token, 'user_id': user.id},
+                        'code': 200
                     },
                     status=status.HTTP_200_OK
                 )
