@@ -7,6 +7,9 @@ class User(AbstractUser):
     mobile = models.CharField(max_length=11, verbose_name='用户手机号', unique=True)
     nickname = models.CharField(max_length=15, unique=True, verbose_name='昵称', null=True)
     avatar_url = models.ImageField(verbose_name='用户头像', null=True)
+    collect_articles = models.ForeignKey('Article', verbose_name='收藏文臧', null=True)
+    like_articles = models.ForeignKey('Article', related_name='like_users', verbose_name='点赞文章', null=True)
+    like_comments = models.ForeignKey('Comment', related_name='like_users', verbose_name='点赞评论', null=True)
 
     class Meta:
         db_table = 'tb_user'
@@ -22,6 +25,8 @@ class Article(models.Model):
     content = models.TextField(verbose_name='文章内容', null=True)
     read_count = models.IntegerField(default=0, verbose_name='阅读量')
     like_count = models.IntegerField(default=0, verbose_name='点赞数')
+    trans_count = models.IntegerField(default=0, verbose_name='转发数')
+    focus_url = models.ImageField(null=True, verbose_name='缩略图')
     is_delete = models.BooleanField(default=False, verbose_name='是否删除')
 
     class Meta:
@@ -31,8 +36,13 @@ class Article(models.Model):
 
 
 class Comment(models.Model):
+    create_time = models.DateField(auto_now=True, verbose_name='创建时间')
+    update_time = models.DateField(default=timezone.now, verbose_name='更新时间')
+    content = models.CharField(max_length=500, verbose_name='评论内容', null=True)
     article = models.ForeignKey('Article', on_delete=models.CASCADE, verbose_name='所属文章', related_name='comments')
-    parent = models.ForeignKey('self', on_delete=models.DO_NOTHING, verbose_name='父评论', related_name='son_comments')
+    author = models.ForeignKey('User', verbose_name='评论者', related_name='comments', null=True)
+    parent = models.ForeignKey('self', on_delete=models.DO_NOTHING, verbose_name='父评论',
+                               related_name='son_comments', null=True)
     like_count = models.IntegerField(default=0, verbose_name='点赞数')
     is_delete = models.BooleanField(default=False, verbose_name='是否删除')
 

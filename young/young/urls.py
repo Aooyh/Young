@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('apps.sign.urls', namespace='sign')),
     url(r'^write/', include('apps.write.urls', namespace='write')),
+    url(r'^read/', include('apps.read.urls', namespace='read')),
+    url(r'^upload/', include('apps.file_upload.urls', namespace='upload')),
 ]

@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.User'
 
+DEFAULT_FILE_STORAGE = 'utils.ali_storage.AliFileStorage'
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -6,7 +6,7 @@ from rest_framework import serializers
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ['id', 'author', 'headline', 'content']
+        fields = ['id', 'headline', 'content']
         read_only_fields = ['id']
         extra_kwargs = {
             'headline': {'max_length': 100, 'min_length': 5},
@@ -14,6 +14,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        validated_data['author'] = self.context.request.user.id
         return Article.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
