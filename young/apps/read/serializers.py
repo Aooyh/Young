@@ -14,7 +14,8 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'author', 'read_count', 'like_count', 'trans_count', 'headline', 'focus_url']
+        fields = ['id', 'author', 'read_count', 'like_count',
+                  'trans_count', 'headline', 'focus_url', 'create_time']
         read_only_fields = ['id']
 
 
