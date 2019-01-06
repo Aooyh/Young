@@ -54,3 +54,16 @@ class ArticleCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         exclude = ['is_delete', 'article']
+
+    def create(self, validated_data):
+        validated_data.pop('son_comments')
+        validated_data['author'] = self.context.get('request').user.id
+        parent_id = self.context.get('comment_id')
+        if parent_id:
+            validated_data['parent'] = parent_id
+        else:
+            validated_data.pop('parent')
+        new_comment = Comment.objects.create(validated_data)
+        new_comment.article = self.context.get('pk')
+        new_comment.save()
+        return new_comment

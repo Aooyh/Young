@@ -1,6 +1,7 @@
-from apps.users.models import Article
-
+import re
 from rest_framework import serializers
+
+from apps.users.models import Article
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -14,8 +15,19 @@ class ArticleSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data['author'] = self.context.request.user.id
-        return Article.objects.create(**validated_data)
+        validated_data['author'] = self.context.get('request').user.id
+        content = validated_data['content']
+        new_article = Article.objects.create(**validated_data)
+        image = re.search('< img.*>?', content)
+        if image:
+            image = image.group()
+            start = image.find('http')
+            end = image.rfind('\"')
+            focus_url = image[start:end]
+            print(focus_url)
+            new_article.focus_url = focus_url
+            new_article.save()
+        return new_article
 
     def update(self, instance, validated_data):
         instance.author = validated_data['author']

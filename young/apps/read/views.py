@@ -1,6 +1,8 @@
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from apps.read.serializers import ArticleListSerializer, ArticleDetailSerializer, ArticleCommentSerializer
 from apps.users.models import Article, Comment
@@ -43,10 +45,21 @@ class ArticleCommentAPIView(ListAPIView):
 
     def get_queryset(self):
         article_id = self.request.path.split('/')[4]
-        query_set = self.queryset.filter(article=article_id).all()
+        query_set = self.queryset.filter(article=article_id).order_by('id').all()
         return query_set
 
     def get(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
         response.data = {'data': response.data, 'code': 200}
         return response
+
+
+# class WriteCommentAPIView(CreateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = ArticleCommentSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         response = super().create(request, *args, **kwargs)
+#         response.data = {'data': response.data, 'code': 200}
+#         return response
+
