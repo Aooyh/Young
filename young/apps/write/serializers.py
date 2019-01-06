@@ -15,7 +15,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data['author'] = self.context.get('request').user.id
+        validated_data['author'] = self.context.get('request').user
         content = validated_data['content']
         new_article = Article.objects.create(**validated_data)
         image = re.search('< img.*>?', content)

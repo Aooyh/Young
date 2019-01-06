@@ -8,7 +8,7 @@ from apps.write.serializers import ArticleSerializer
 class ArticleAPIView(CreateAPIView, UpdateAPIView):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
