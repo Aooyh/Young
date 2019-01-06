@@ -8,8 +8,9 @@ class User(AbstractUser):
     nickname = models.CharField(max_length=15, unique=True, verbose_name='昵称', null=True)
     avatar_url = models.ImageField(verbose_name='用户头像', null=True)
     collect_articles = models.ForeignKey('Article', verbose_name='收藏文臧', null=True)
-    like_articles = models.ForeignKey('Article', related_name='like_users', verbose_name='点赞文章', null=True)
-    like_comments = models.ForeignKey('Comment', related_name='like_users', verbose_name='点赞评论', null=True)
+    # read_articles = models.ManyToManyField('Article', related_name='read_users', verbose_name='阅读文章', null=True)
+    like_articles = models.ManyToManyField('Article', related_name='like_users', verbose_name='点赞文章', null=True)
+    like_comments = models.ManyToManyField('Comment', related_name='like_users', verbose_name='点赞评论', null=True)
 
     class Meta:
         db_table = 'tb_user'

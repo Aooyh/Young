@@ -29,7 +29,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
 
 class ParentCommentSerializer(serializers.ModelSerializer):
-    author = AuthorInfoSerializer
+    author = AuthorInfoSerializer()
 
     class Meta:
         model = Comment
@@ -38,7 +38,7 @@ class ParentCommentSerializer(serializers.ModelSerializer):
 
 
 class SonCommentSerializer(serializers.ModelSerializer):
-    author = AuthorInfoSerializer
+    author = AuthorInfoSerializer()
 
     class Meta:
         model = Comment
