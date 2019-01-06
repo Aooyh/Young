@@ -47,6 +47,7 @@ class SonCommentSerializer(serializers.ModelSerializer):
 
 
 class ArticleCommentSerializer(serializers.ModelSerializer):
+    author = AuthorInfoSerializer()
     parent = ParentCommentSerializer()
     son_comments = SonCommentSerializer(many=True)
 
